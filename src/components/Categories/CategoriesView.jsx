@@ -8,6 +8,7 @@ import { Plus, Tag } from 'lucide-react';
 import { fetchCategories, createCategory, updateCategory, deleteCategory } from '../../services/categoryService';
 import { fetchExpenses } from '../../services/expenseService';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CategoriesView() {
   const [categories, setCategories] = useState([]);
@@ -24,6 +25,7 @@ export default function CategoriesView() {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const { addToast } = useToast();
+  const { user } = useAuth();
 
   const loadData = async () => {
     setLoading(true);
@@ -73,7 +75,7 @@ export default function CategoriesView() {
 
   const handleDeleteCategory = async () => {
     if (!deletingCategory) return;
-    
+
     // Check if expenses reference this category
     const linkedCount = expenses.filter((e) => e.category_id === deletingCategory.id).length;
     if (linkedCount > 0) {
@@ -96,51 +98,90 @@ export default function CategoriesView() {
     }
   };
 
+  // Separate categories based on ownership using the creator field
+  const myCategories = categories.filter((cat) => cat.creator && String(cat.creator) === String(user?.id));
+  const sharedCategories = categories.filter((cat) => !cat.creator || String(cat.creator) !== String(user?.id));
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <div className="card" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <Tag size={20} style={{ color: 'var(--primary)' }} />
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              Expense Categories ({categories.length})
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              Organize expense records into unique spending categories
-            </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* My Categories Section */}
+      <div>
+        <div className="card" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Tag size={20} style={{ color: 'var(--primary)' }} />
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                My Categories ({myCategories.length})
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                Categories you own and can edit or delete
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setEditingCategory(null);
+              setIsModalOpen(true);
+            }}
+            className="btn btn-primary btn-sm"
+            data-tooltip="Add a new spending category"
+          >
+            <Plus size={16} />
+            <span>New Category</span>
+          </button>
+        </div>
+
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : (
+          <CategoryList
+            categories={myCategories}
+            expenses={expenses}
+            onEdit={(cat) => {
+              setEditingCategory(cat);
+              setIsModalOpen(true);
+            }}
+            onDelete={(cat) => setDeletingCategory(cat)}
+            showActions={true}
+          />
+        )}
+      </div>
+
+      {/* Shared Categories Section */}
+      <div>
+        <div className="card" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Tag size={20} style={{ color: 'var(--text-muted)' }} />
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Shared Categories ({sharedCategories.length})
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                Categories created by other users (read‑only)
+              </span>
+            </div>
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingCategory(null);
-            setIsModalOpen(true);
-          }}
-          className="btn btn-primary btn-sm"
-          data-tooltip="Add a new spending category"
-        >
-          <Plus size={16} />
-          <span>New Category</span>
-        </button>
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : (
+          <CategoryList
+            categories={sharedCategories}
+            expenses={expenses}
+            showActions={false}
+          />
+        )}
       </div>
-
-      {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
-      ) : (
-        <CategoryList
-          categories={categories}
-          expenses={expenses}
-          onEdit={(cat) => {
-            setEditingCategory(cat);
-            setIsModalOpen(true);
-          }}
-          onDelete={(cat) => setDeletingCategory(cat)}
-        />
-      )}
 
       {/* Create / Edit Modal */}
       <CategoryModal

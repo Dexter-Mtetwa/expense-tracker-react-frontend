@@ -43,6 +43,12 @@ export async function apiRequest(endpoint, options = {}) {
 
     if (!response.ok) {
       if (response.status === 401) {
+        // For login endpoint we handle the error locally in the UI, so do not clear token or fire global event.
+        if (endpoint.includes('/auth/login')) {
+          const error = new Error('Invalid email or password');
+          error.status = 401;
+          throw error;
+        }
         localStorage.removeItem('expense_tracker_token');
         localStorage.removeItem('expense_tracker_user');
         window.dispatchEvent(new Event('auth_unauthorized'));

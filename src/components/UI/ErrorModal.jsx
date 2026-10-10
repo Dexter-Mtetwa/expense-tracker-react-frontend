@@ -16,7 +16,7 @@ export default function ErrorModal({ isOpen, onClose, title = 'Unable to Complet
           border: '1px solid rgba(239, 68, 68, 0.3)',
           display: 'flex',
           alignItems: 'center',
-          justify: 'center',
+          justifyContent: 'center',
           color: 'var(--danger)',
         }}>
           <AlertCircle size={28} />

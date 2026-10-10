@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useToast } from './ToastContext';
 import { loginUser as loginApi, registerUser as registerApi } from '../services/authService';
 
 const AuthContext = createContext();

@@ -6,7 +6,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="450px">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', padding: '0.5rem 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 0' }}>
           <div style={{
             width: '42px',
             height: '42px',
@@ -14,7 +14,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
             background: isDanger ? 'rgba(244, 63, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
             display: 'flex',
             alignItems: 'center',
-            justify: 'center',
+            justifyContent: 'center',
             color: isDanger ? 'var(--danger)' : 'var(--warning)',
             flexShrink: 0,
           }}>

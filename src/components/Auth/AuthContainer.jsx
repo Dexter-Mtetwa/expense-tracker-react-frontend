@@ -40,7 +40,7 @@ export default function AuthContainer() {
             background: 'var(--primary)',
             display: 'flex',
             alignItems: 'center',
-            justify: 'center',
+            justifyContent: 'center',
             marginBottom: '0.875rem',
           }}>
             <Receipt size={26} style={{ color: '#ffffff' }} />

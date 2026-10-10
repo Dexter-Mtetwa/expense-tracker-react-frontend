@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tag, Edit2, Trash2, Calendar, DollarSign } from 'lucide-react';
 
-export default function CategoryList({ categories = [], expenses = [], onEdit, onDelete }) {
+export default function CategoryList({ categories = [], expenses = [], onEdit, onDelete, showActions = true }) {
   if (categories.length === 0) {
     return (
       <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -59,24 +59,26 @@ export default function CategoryList({ categories = [], expenses = [], onEdit, o
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.25rem' }}>
-                <button
-                  onClick={() => onEdit(cat)}
-                  className="btn btn-secondary btn-icon btn-sm"
-                  title="Edit Category"
-                  style={{ width: '30px', height: '30px' }}
-                >
-                  <Edit2 size={13} />
-                </button>
-                <button
-                  onClick={() => onDelete(cat)}
-                  className="btn btn-danger btn-icon btn-sm"
-                  title="Delete Category"
-                  style={{ width: '30px', height: '30px' }}
-                >
-                  <Trash2 size={13} />
-                </button>
-              </div>
+              {showActions && (
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                  <button
+                    onClick={() => onEdit(cat)}
+                    className="btn btn-secondary btn-icon btn-sm"
+                    title="Edit Category"
+                    style={{ width: '30px', height: '30px' }}
+                  >
+                    <Edit2 size={13} />
+                  </button>
+                  <button
+                    onClick={() => onDelete(cat)}
+                    className="btn btn-danger btn-icon btn-sm"
+                    title="Delete Category"
+                    style={{ width: '30px', height: '30px' }}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

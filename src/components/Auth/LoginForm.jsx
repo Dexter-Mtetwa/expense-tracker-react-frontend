@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
+import Spinner from '../../components/UI/Spinner';
 
 export default function LoginForm() {
   const { login, loading } = useAuth();
